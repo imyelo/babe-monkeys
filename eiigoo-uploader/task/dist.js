@@ -51,6 +51,6 @@ gulp.task('dist', function () {
     .pipe(buffer())
     .pipe(uglify())
     .pipe(header(banner, pkg))
-    .pipe(rename({basename: 'eiigoo-uploader'}))
+    .pipe(rename({basename: 'eiigoo-uploader.user'}))
     .pipe(gulp.dest('dist/'));
 });
