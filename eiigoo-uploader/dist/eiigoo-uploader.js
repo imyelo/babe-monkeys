@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         eiigoo-uploader
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @namespace    https://github.com/imyelo/babe-monkeys/
+// @version      1.0.0
 // @description  i love my babe.
 // @author       yelo
 // @match        http://www.eiigoo.com/sadmin.php?module=taobao&action=add

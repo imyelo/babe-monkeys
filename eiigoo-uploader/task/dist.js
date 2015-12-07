@@ -7,15 +7,16 @@ var rename = require('gulp-rename');
 
 var through = require('through2');
 
+var pkg = require('../package.json');
 var banner =
 `// ==UserScript==
-// @name         eiigoo-uploader
-// @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  i love my babe.
-// @author       yelo
-// @match        http://www.eiigoo.com/sadmin.php?module=taobao&action=add
-// @grant        none
+// @name         <%= name %>
+// @namespace    <%= userscript.namespace %>
+// @version      <%= version %>
+// @description  <%= description %>
+// @author       <%= author %>
+// @match        <%= userscript.match %>
+// @grant        <%= userscript.grant %>
 // ==/UserScript==
 /* jshint -W097 */
 'use strict';
@@ -38,7 +39,7 @@ var gulpBrowserify = function () {
   return through.obj(plugin);
 };
 
-gulp.task('eiigoo-uploader', function () {
+gulp.task('dist', function () {
   return gulp.src([
       './src/eiigoo-uploader.js'
     ], {
@@ -49,7 +50,7 @@ gulp.task('eiigoo-uploader', function () {
     .pipe(gulp.dest('dist/'))
     .pipe(buffer())
     .pipe(uglify())
-    .pipe(header(banner))
+    .pipe(header(banner, pkg))
     .pipe(rename({basename: 'eiigoo-uploader'}))
     .pipe(gulp.dest('dist/'));
 });
