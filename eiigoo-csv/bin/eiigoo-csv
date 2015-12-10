@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+var _ = require('underscore');
+var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs'));
+var program = require('commander');
+var path = require('path');
+
+var loader = require('../src/loader');
+var transform = require('../src/transform');
+var cwd = process.cwd();
+
+
+program
+  .version('0.0.1')
+  .option('-o, --output [file]', '输出 CSV 文件', './output.csv')
+  .option('-t, --taobao [file]', '淘宝导出 CSV 文件', './taobao.csv')
+  .option('-z, --zencart [file]', 'Zencart 导出 CSV 文件', './zencart.csv')
+  .parse(process.argv);
+
+
+Promise.all([
+    loader.zencart(path.resolve(cwd, program.zencart)),
+    loader.taobao(path.resolve(cwd, program.taobao))
+  ]).then(function (data) {
+    return transform({
+      zencart: data[0],
+      taobao: data[1]
+    });
+  }).then(function (output) {
+    // 输出文件
+    return fs.writeFileAsync(path.resolve(cwd, program.output), output);
+  }).catch(function (err) {
+    console.error(err.message);
+  });
