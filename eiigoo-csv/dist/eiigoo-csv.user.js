@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         eiigoo-csv
 // @namespace    https://github.com/imyelo/babe-monkeys/
-// @version      0.1.0
+// @version      0.2.0
 // @description  i love my babe.
 // @author       yelo
 // @match        http://www.eiigoo.com/sadmin.php?module=taobao&action=add
