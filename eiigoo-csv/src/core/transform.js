@@ -4,8 +4,9 @@ var iconv = require('iconv-lite');
 var Promise = require('bluebird');
 
 var HEADER = 'version 1.00';
+var IMAGE_PATH = 'http://www.eiigoo.com/union/shopimg/user_img/<%- uid %>/taobao/';
 
-var transform = module.exports = function (source) {
+var transform = module.exports = function (source, options) {
   return Promise.resolve()
     .then(function () {
       // 合并数据
@@ -13,9 +14,13 @@ var transform = module.exports = function (source) {
       var taobao = source.taobao;
       return _.map(taobao, function (item, index) {
         var zen = zencart[index];
+        var description = zen['v_products_description_1'];
+        description = description.replace(/(src=")(images\/\d+\/)(\w+\.jpg"\/>)/g, '$1' + _.template(IMAGE_PATH)({
+          uid: options.uid
+        }) + '$3');
         return _.extend({}, item, {
           title: zen['v_products_name_1'],
-          description: zen['v_products_description_1']
+          description: description
         });
       });
     }).then(function (items) {

@@ -30,7 +30,7 @@
     "whatwg-fetch": "^0.10.1"
   },
   "devDependencies": {
-    "@maizuo-fe/gulp-watchify": "^0.6.0",
+    "@maizuo-fe/gulp-watchify": "https://github.com/maizuo-fe/gulp-watchify.git",
     "browserify": "^12.0.1",
     "chai": "^3.4.1",
     "eventproxy": "^0.3.4",

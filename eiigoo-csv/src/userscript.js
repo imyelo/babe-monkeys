@@ -6,6 +6,8 @@ var CONSTANT = {
   FILE_FIELD_NAME: 'csv_file'
 };
 
+var uid = $('#header .top1_bg .span_right .tnav .red').attr('href').match(/(\d+)$/)[1];
+
 var $form = $('div.mem_right > form').eq(0);
 
 var $container = $('<td>');
@@ -26,6 +28,8 @@ $confirm.click(function () {
   ec.combine({
       taobao: $taobao.get(0).files[0],
       zencart: $zencart.get(0).files[0]
+    }, {
+      uid: uid
     })
     .then(function (buffer) {
       $preview.empty();

@@ -15,6 +15,7 @@ var paths;
 
 program
   .version('0.0.1')
+  .option('-u, --uid [id]', 'eiigoo 用户数字 id', '0')
   .option('-o, --output [file]', '输出 CSV 文件', './output.csv')
   .option('-t, --taobao [file]', '淘宝导出 CSV 文件', './taobao.csv')
   .option('-z, --zencart [file]', 'Zencart 导出 CSV 文件', './zencart.csv')
@@ -34,6 +35,8 @@ Promise.all([
     return transform({
       zencart: data[0],
       taobao: data[1]
+    }, {
+    	uid: program.uid
     });
   }).then(function (output) {
     // 输出文件

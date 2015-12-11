@@ -14,7 +14,7 @@ var readFile = function (file) {
   });
 };
 
-var combine = function (file) {
+var combine = function (file, options) {
   return Promise.all([
     readFile(file.taobao).then(loader.taobao),
     readFile(file.zencart).then(loader.zencart)
@@ -22,7 +22,7 @@ var combine = function (file) {
     return transform({
       taobao: data[0],
       zencart: data[1]
-    });
+    }, options);
   });
 };
 
