@@ -1,7 +1,7 @@
 {
   "name": "eiigoo-uploader",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "i love my babe.",
   "main": "src",
   "scripts": {},
@@ -21,6 +21,7 @@
     "eventproxy": "^0.3.4",
     "foreach": "^2.0.5",
     "jquery": "^2.1.4",
+    "nprogress": "^0.2.0",
     "reduce": "^1.0.1",
     "superagent": "^1.4.0",
     "underscore": "^1.8.3"
@@ -28,9 +29,13 @@
   "devDependencies": {
     "browserify": "^12.0.1",
     "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-css2js": "^1.0.2",
+    "gulp-cssmin": "^0.1.7",
     "gulp-header": "^1.7.1",
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.5.1",
+    "streamqueue": "^1.1.1",
     "through2": "^2.0.0",
     "vinyl-buffer": "^1.0.0"
   }

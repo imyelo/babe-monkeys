@@ -1,6 +1,10 @@
 var gulp = require('gulp');
 var browserify = require('browserify');
 var buffer = require('vinyl-buffer');
+var Queue = require('streamqueue');
+var concat = require('gulp-concat');
+var css2js = require('gulp-css2js');
+var cssmin = require('gulp-cssmin');
 var header = require('gulp-header');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
@@ -40,15 +44,20 @@ var gulpBrowserify = function () {
 };
 
 gulp.task('dist', function () {
-  return gulp.src([
-      './src/eiigoo-uploader.js'
-    ], {
-      base: './src/'
-    })
-    .pipe(gulpBrowserify())
+  return Queue({ objectMode: true },
+    gulp.src([
+        './src/eiigoo-uploader.js'
+      ], {
+        base: './src/'
+      })
+      .pipe(gulpBrowserify())
+      .pipe(buffer()),
+    gulp.src('./node_modules/nprogress/nprogress.css')
+      .pipe(cssmin())
+      .pipe(css2js()))
+    .pipe(concat('concat.js'))
     .pipe(rename({basename: 'eiigoo-uploader.debug'}))
     .pipe(gulp.dest('dist/'))
-    .pipe(buffer())
     .pipe(uglify())
     .pipe(header(banner, pkg))
     .pipe(rename({basename: 'eiigoo-uploader.user'}))

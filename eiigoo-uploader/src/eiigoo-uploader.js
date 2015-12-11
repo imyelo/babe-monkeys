@@ -2,6 +2,7 @@ var $ = require('jquery');
 var Promise = require('bluebird');
 var Upload = require('component-upload');
 var cookie = require('component-cookie');
+var nprogress = require('nprogress');
 
 var sessionId = cookie('sessionID');
 var isUploading = false;
@@ -37,19 +38,23 @@ var init = function () {
   $commit = $('<a href="javascript:void 0;">上传</a>').appendTo('.mem_right');
   $commit.click(function () {
     var files = $files[0].files;
+    var length = files.length;
     if (isUploading) {
       return;
     }
     $commit.text('uploading...');
     isUploading = true;
+    nprogress.start();
 
     reduce(files, function (queue, file) {
       return queue.then(function () {
+        nprogress.inc(1 / length);
         return services.upload(file);
       });
     }, Promise.resolve()).then(function () {
-      alert(files.length + '个文件上传成功.');
+      alert(length + '个文件上传成功.');
       isUploading = false;
+      nprogress.done();
       $commit.text('上传');
     }).catch(function (err) {
       alert(err.message || err);
