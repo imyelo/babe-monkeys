@@ -16,8 +16,6 @@ var banner =
 // @match        <%= userscript.match %>
 // @grant        <%= userscript.grant %>
 // ==/UserScript==
-/* jshint -W097 */
-'use strict';
 
 `
 
