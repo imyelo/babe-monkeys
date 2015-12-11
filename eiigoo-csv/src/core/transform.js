@@ -24,10 +24,12 @@ var transform = module.exports = function (source) {
       var length = keys.length;
       var header = _.chain(length - 1).range().map(function () { return ''; }).value();
       header.unshift(HEADER);
-      return [header, keys].concat(_.map(items, _.values));
+      return [header, keys, keys].concat(_.map(items, _.values));
     }).then(function (sheet) {
       // 转换为文本
-      return Promise.promisify(csv.stringify)(sheet);
+      return Promise.promisify(csv.stringify)(sheet, {
+        delimiter: '\t'
+      });
     }).then(function (text) {
       // 转换为 gbk 编码
       return iconv.encode(text, 'gbk');

@@ -7,8 +7,8 @@ var program = require('commander');
 var path = require('path');
 var chalk = require('chalk');
 
-var loader = require('../src/loader');
-var transform = require('../src/transform');
+var loader = require('../src/core/loader');
+var transform = require('../src/core/transform');
 var cwd = process.cwd();
 
 var paths;
@@ -28,8 +28,8 @@ console.log('输入文件: %s', chalk.gray(paths.taobao));
 console.log('输入文件: %s', chalk.gray(paths.zencart));
 
 Promise.all([
-    loader.zencart(paths.zencart),
-    loader.taobao(paths.taobao)
+    fs.readFileAsync(paths.zencart).then(loader.zencart),
+    fs.readFileAsync(paths.taobao).then(loader.taobao)
   ]).then(function (data) {
     return transform({
       zencart: data[0],

@@ -2,10 +2,9 @@ var _ = require('underscore');
 var csv = require('csv');
 var Promise = require('bluebird');
 var iconv = require('iconv-lite');
-var fs = Promise.promisifyAll(require('fs'));
 
-var taobao = function (path) {
-  return fs.readFileAsync(path)
+var taobao = function (buffer) {
+  return Promise.resolve(buffer)
     .then(_.partial(iconv.decode, _, 'utf16'))
     .then(_.partial(Promise.promisify(csv.parse), _, {
       delimiter: '\t'
@@ -18,8 +17,8 @@ var taobao = function (path) {
     });
 };
 
-var zencart = function (path) {
-  return fs.readFileAsync(path)
+var zencart = function (buffer) {
+  return Promise.resolve(buffer)
     .then(Promise.promisify(csv.parse))
     .then(function (sheet) {
       var titles = sheet[0];
