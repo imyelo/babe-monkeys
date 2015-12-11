@@ -5,11 +5,13 @@ var Promise = require('bluebird');
 var fs = Promise.promisifyAll(require('fs'));
 var program = require('commander');
 var path = require('path');
+var chalk = require('chalk');
 
 var loader = require('../src/loader');
 var transform = require('../src/transform');
 var cwd = process.cwd();
 
+var paths;
 
 program
   .version('0.0.1')
@@ -18,10 +20,16 @@ program
   .option('-z, --zencart [file]', 'Zencart 导出 CSV 文件', './zencart.csv')
   .parse(process.argv);
 
+paths = _.mapObject(_.pick(program, 'output', 'taobao', 'zencart'), function (value) {
+  return path.resolve(cwd, value);
+});
+
+console.log('输入文件: %s', chalk.gray(paths.taobao));
+console.log('输入文件: %s', chalk.gray(paths.zencart));
 
 Promise.all([
-    loader.zencart(path.resolve(cwd, program.zencart)),
-    loader.taobao(path.resolve(cwd, program.taobao))
+    loader.zencart(paths.zencart),
+    loader.taobao(paths.taobao)
   ]).then(function (data) {
     return transform({
       zencart: data[0],
@@ -29,7 +37,14 @@ Promise.all([
     });
   }).then(function (output) {
     // 输出文件
-    return fs.writeFileAsync(path.resolve(cwd, program.output), output);
+    return fs.writeFileAsync(paths.output, output);
+  }).then(function () {
+    console.log('输出文件: %s \n%s', chalk.gray(paths.output), chalk.green('合并完成 √'));
   }).catch(function (err) {
     console.error(err.message);
+    if (err.message.match(/^ENOENT/)) {
+      console.log(chalk.yellow('异常: 找不到导入的文件啦傻逼'));
+    } else {
+      console.log(chalk.yellow('异常.'));
+    }
   });
