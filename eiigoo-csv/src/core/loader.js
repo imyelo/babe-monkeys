@@ -28,5 +28,17 @@ var zencart = function (buffer) {
     });
 };
 
+var ioffer = function (buffer) {
+  return Promise.resolve(buffer)
+    .then(Promise.promisify(csv.parse))
+    .then(function (sheet) {
+      var titles = sheet[0];
+      return _.map(sheet.slice(1), function (data) {
+        return _.object(titles, data);
+      });
+    });
+};
+
 exports.taobao = taobao;
 exports.zencart = zencart;
+exports.ioffer = ioffer;

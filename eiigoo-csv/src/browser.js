@@ -17,11 +17,13 @@ var readFile = function (file) {
 var combine = function (file, options) {
   return Promise.all([
     readFile(file.taobao).then(loader.taobao),
+    readFile(file.ioffer).then(loader.ioffer),
     readFile(file.zencart).then(loader.zencart)
   ]).then(function (data) {
     return transform({
       taobao: data[0],
-      zencart: data[1]
+      ioffer: data[1],
+      zencart: data[2]
     }, options);
   });
 };
