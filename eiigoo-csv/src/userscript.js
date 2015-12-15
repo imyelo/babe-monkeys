@@ -12,8 +12,8 @@ var uid = $('#header .top1_bg .span_right .tnav .red').attr('href').match(/(\d+)
 var $form = $('div.mem_right > form').eq(0);
 
 var $container = $('<td>');
-var $ioffer = $('<input type="file">');
 var $taobao = $('<input type="file">');
+var $wish = $('<input type="file">');
 var $zencart = $('<input type="file">');
 var $preview = $('<div>');
 
@@ -35,8 +35,8 @@ var cache = {};
 
 var combine = function () {
   return ec.combine({
-      ioffer: $ioffer.get(0).files[0],
       taobao: $taobao.get(0).files[0],
+      wish: $wish.get(0).files[0],
       zencart: $zencart.get(0).files[0]
     }, {
       uid: uid
@@ -58,8 +58,8 @@ var combine = function () {
 };
 
 $container
-  .append($('<p>').append($('<label>ioffer: </label>').append($ioffer)))
   .append($('<p>').append($('<label>淘宝: </label>').append($taobao)))
+  .append($('<p>').append($('<label>wish: </label>').append($wish)))
   .append($('<p>').append($('<label>zencart: </label>').append($zencart)))
   .append($('<p>').append($combine))
   .append($('<p>').append($confirm))

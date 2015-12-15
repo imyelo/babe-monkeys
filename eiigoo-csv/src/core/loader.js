@@ -2,6 +2,7 @@ var _ = require('underscore');
 var csv = require('csv');
 var Promise = require('bluebird');
 var iconv = require('iconv-lite');
+var xls = require('xlsjs');
 
 var taobao = function (buffer) {
   return Promise.resolve(buffer)
@@ -39,6 +40,14 @@ var ioffer = function (buffer) {
     });
 };
 
+var wish = function (buffer) {
+  return Promise.resolve(buffer)
+    .then(function (buffer) {
+      return xls.utils.sheet_to_json(xls.read(buffer).Sheets.Cells);
+    });
+};
+
 exports.taobao = taobao;
 exports.zencart = zencart;
 exports.ioffer = ioffer;
+exports.wish = wish;

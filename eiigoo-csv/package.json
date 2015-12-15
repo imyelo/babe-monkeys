@@ -27,7 +27,8 @@
     "iconv-lite": "^0.4.13",
     "through2": "^2.0.0",
     "underscore": "^1.8.3",
-    "whatwg-fetch": "^0.10.1"
+    "whatwg-fetch": "^0.10.1",
+    "xlsjs": "^0.7.5"
   },
   "devDependencies": {
     "@maizuo-fe/gulp-watchify": "https://github.com/maizuo-fe/gulp-watchify.git",

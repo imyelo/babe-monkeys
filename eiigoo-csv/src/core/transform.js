@@ -12,7 +12,7 @@ var transform = module.exports = function (source, options) {
       // 合并数据
       var zencart = source.zencart;
       var taobao = source.taobao;
-      var ioffer = source.ioffer;
+      var wish = source.wish;
       return _.map(taobao, function (item, index) {
         var zen = zencart[index];
         var description = zen['v_products_description_1'];
@@ -20,7 +20,7 @@ var transform = module.exports = function (source, options) {
           uid: options.uid
         }) + '$3');
         return _.extend({}, item, {
-          title: ioffer['title'] || zen['v_products_name_1'],
+          title: wish[index]['Product Name1'] || zen['v_products_name_1'],
           description: description
         });
       });

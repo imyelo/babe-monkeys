@@ -4,7 +4,7 @@ $(function() {
   $('.btn-combine').on('click', function() {
     ec.combine({
         taobao: $('.input-taobao').get(0).files[0],
-        ioffer: $('.input-ioffer').get(0).files[0],
+        wish: $('.input-wish').get(0).files[0],
         zencart: $('.input-zencart').get(0).files[0]
       }, {
         uid: $('.input-uid').val()

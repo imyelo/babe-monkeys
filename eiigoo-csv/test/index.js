@@ -47,20 +47,33 @@ describe('loader', function () {
         .catch(done);
     });
   });
+  describe('wish', function () {
+    it('should be formatted', function (done) {
+      Promise.all([
+          asset('source/wish.xls').then(loader.wish),
+          asset('expect/wish.json').then(JSON.parse)
+        ])
+        .then(function (data) {
+          expect(data[0]).to.be.deep.equal(data[1]);
+          done();
+        })
+        .catch(done);
+    });
+  });
 });
 
 describe('transform', function () {
   it('should be fine', function (done) {
     Promise.all([
-        asset('source/zencart.csv').then(loader.zencart),
         asset('source/taobao.csv').then(loader.taobao),
-        asset('source/ioffer.csv').then(loader.ioffer),
+        asset('source/wish.xls').then(loader.wish),
+        asset('source/zencart.csv').then(loader.zencart),
         asset('expect/transform.csv')
       ]).then(function (data) {
         return transform({
-          zencart: data[0],
-          taobao: data[1],
-          ioffer: data[2]
+          taobao: data[0],
+          wish: data[1],
+          zencart: data[2]
         }, {
           uid: 4310
         }).then(function (result) {

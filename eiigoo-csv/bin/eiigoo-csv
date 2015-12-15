@@ -17,28 +17,28 @@ program
   .version('0.0.1')
   .option('-u, --uid [id]', 'eiigoo 用户数字 id', '0')
   .option('-o, --output [file]', '输出 CSV 文件', './output.csv')
-  .option('-i, --ioffer [file]', 'ioffer 导出 CSV 文件', './ioffer.csv')
   .option('-t, --taobao [file]', '淘宝导出 CSV 文件', './taobao.csv')
+  .option('-w, --wish [file]', 'wish 导出 CSV 文件', './wish.xls')
   .option('-z, --zencart [file]', 'Zencart 导出 CSV 文件', './zencart.csv')
   .parse(process.argv);
 
-paths = _.mapObject(_.pick(program, 'output', 'ioffer', 'taobao', 'zencart'), function (value) {
+paths = _.mapObject(_.pick(program, 'output', 'taobao', 'wish', 'zencart'), function (value) {
   return path.resolve(cwd, value);
 });
 
-console.log('输入文件: %s', chalk.gray(paths.ioffer));
 console.log('输入文件: %s', chalk.gray(paths.taobao));
+console.log('输入文件: %s', chalk.gray(paths.wish));
 console.log('输入文件: %s', chalk.gray(paths.zencart));
 
 Promise.all([
-    fs.readFileAsync(paths.zencart).then(loader.zencart),
     fs.readFileAsync(paths.taobao).then(loader.taobao),
-    fs.readFileAsync(paths.ioffer).then(loader.ioffer)
+    fs.readFileAsync(paths.wish).then(loader.wish),
+    fs.readFileAsync(paths.zencart).then(loader.zencart)
   ]).then(function (data) {
     return transform({
-      zencart: data[0],
-      taobao: data[1],
-      ioffer: data[2]
+      taobao: data[0],
+      wish: data[1],
+      zencart: data[2]
     }, {
     	uid: program.uid
     });
