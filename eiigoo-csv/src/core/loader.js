@@ -43,7 +43,10 @@ var ioffer = function (buffer) {
 var wish = function (buffer) {
   return Promise.resolve(buffer)
     .then(function (buffer) {
-      return xls.utils.sheet_to_json(xls.read(buffer).Sheets.Cells);
+      return typeof buffer === 'string' ? xls.read(buffer, { type: 'binary' }) : xls.read(buffer);
+    })
+    .then(function (data) {
+      return xls.utils.sheet_to_json(data.Sheets.Cells);
     });
 };
 
