@@ -10,8 +10,16 @@
   "author": "yelo",
   "license": "ISC",
   "dependencies": {
+    "barrow": "^0.2.0",
     "bluebird": "^3.0.6",
     "cheerio": "^0.19.0",
-    "superagent": "^1.5.0"
+    "csv": "^0.4.6",
+    "fs-extra": "^0.26.2",
+    "iconv-lite": "^0.4.13",
+    "lodash": "^3.10.1",
+    "md5": "^2.0.0",
+    "pretty-hrtime": "^1.0.1",
+    "superagent": "^1.5.0",
+    "urllib": "^2.6.0"
   }
 }

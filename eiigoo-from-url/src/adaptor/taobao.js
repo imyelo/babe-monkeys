@@ -1,0 +1,55 @@
+var Barrow = require('barrow');
+var BT = Barrow.Types;
+
+exports.fromAliexpress = new Barrow({
+  "title": 'title',
+  "cid": 'id',
+  "seller_cids": BT.val(''),
+  "stuff_status": BT.val('1'),
+  "location_state": BT.val('广东'),
+  "location_city": BT.val('深圳'),
+  "item_type": BT.val('1'),
+  "price": 'price',
+  "auction_increment": BT.val(''),
+  "num": BT.val('9999'),
+  "valid_thru": BT.val('14'),
+  "freight_payer": BT.val('2'),
+  "post_fee": BT.val('5'),
+  "ems_fee": BT.val('20'),
+  "express_fee": BT.val('10'),
+  "has_invoice": BT.val('0'),
+  "has_warranty": BT.val('1'),
+  "approve_status": BT.val('1'),
+  "has_showcase": BT.val('0'),
+  "list_time": BT.val(''),
+  "description": 'description',
+  "cateProps": BT.val(''),
+  "postage_id": BT.val('0'),
+  "has_discount": BT.val('0'),
+  "modified": BT.val(''),
+  "upload_fail_msg": '100',
+  "picture_status": '2;2;2;2;2;',
+  "auction_point": BT.val('0'),
+  "picture": BT.func(function (source) {
+    return source.images.map(function (image, index) {
+      return image.md5 + ':1:' + index + ':|;';
+    }).join('');
+  }),
+  "video": BT.val(''),
+  "skuProps": BT.val(''),
+  "inputPids": BT.val(''),
+  "inputValues": BT.val(''),
+  "outer_id": BT.val(''),
+  "propAlias": BT.val(''),
+  "auto_fill": BT.val('0'),
+  "num_id": BT.val('0'),
+  "local_cid": BT.val('0'),
+  "navigation_type": '1',
+  "user_name": BT.val(''),
+  "syncStatus": BT.val('2'),
+  "is_lighting_consigment": BT.val('0'),
+  "is_xinpin": BT.val('0'),
+  "foodparame": BT.val(''),
+  "features": BT.val(''),
+  "global_stock_type": BT.val('')
+});
