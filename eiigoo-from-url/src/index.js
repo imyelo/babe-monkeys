@@ -1,5 +1,3 @@
-var SOURCE = 'http://www.aliexpress.com/item/MXV-Quad-Core-Android-TV-BOX-S805-1GB-8GB-Cortex-1-5-GHZ-Android-4-4/32410246749.html?spm=2114.01010108.3.1.j1CDlx&ws_ab_test=searchweb201556_7,searchweb201644_0_79_78_77_82_80_62,searchweb201560_3';
-
 var _ = require('lodash');
 var path = require('path');
 var md5 = require('md5');
@@ -14,12 +12,15 @@ var prettyHrtime = require('pretty-hrtime');
 var TaobaoAdaptor = require('./adaptor/taobao');
 
 var cache = function (filename, buffer) {
-  return fs.writeFileAsync(path.resolve(__dirname, '../.cache/', filename), buffer);
+  var thePath = path.resolve(__dirname, '../.cache/', filename);
+  return fs.writeFileAsync(thePath, buffer).then(function () {
+    return thePath;
+  });
 };
 
 var service = {
   description: function (id) {
-    return urllib.request('http://desc.aliexpress.com/getDescModuleAjax.htm?productId=32410246749')
+    return urllib.request('http://desc.aliexpress.com/getDescModuleAjax.htm?productId=' + id)
       .then(function (result) {
         return result.data.toString();
       })
@@ -36,7 +37,8 @@ var service = {
     }).then(function (image) {
       image.md5 = md5(image.buffer).toUpperCase();
       image.filename = image.md5 + '.jpg';
-      return cache(image.filename, image.buffer).then(function (file) {
+      return cache(image.filename, image.buffer).then(function (path) {
+        image.path = path;
         return image;
       });
     });
@@ -46,7 +48,8 @@ var service = {
   }
 };
 
-var fetch = function (url) {
+var fetch = function (url, options) {
+  var startAt = process.hrtime();
   return urllib.request(url)
     .then(function (result) {
       return result.data.toString();
@@ -82,7 +85,7 @@ var fetch = function (url) {
       return Promise.all($('img').map(function () {
         var $el = $(this);
         return service.image($el.attr('src')).then(function (image) {
-          $el.attr('src', 'http://www.eiigoo.com/union/shopimg/user_img/0/taobao/' + image.filename);
+          $el.attr('src', 'http://www.eiigoo.com/union/shopimg/user_img/' + options.uid + '/taobao/' + image.filename);
           item.caches.push(image);
         });
       }).get()).then(function () {
@@ -90,41 +93,54 @@ var fetch = function (url) {
         item.description = $.html();
         return item;
       });
+    })
+    .then(function (item) {
+      console.log('url: %s', url);
+      console.log('1 item with %s images cached', item.caches.length);
+      console.log('cost %s', prettyHrtime(process.hrtime(startAt)));
+      return item;
     });
 };
 
-var init = function () {
-  urllib.TIMEOUT = 30000;
-  return fs.ensureDirAsync(path.resolve(__dirname, '../.cache'));
+var init = function (options) {
+  urllib.TIMEOUT = options.timeout;
+  return fs.ensureDirAsync(path.resolve(__dirname, '../.cache/'));
 };
 
-var startAt = process.hrtime();
-
-init()
-  .then(function () {
-    return fetch(SOURCE);
-  })
-  .then(function (item) {
-    // console.log(item);
-    console.log('url: %s', SOURCE);
-    console.log('1 item with %s images cached', item.caches.length);
-    console.log('cost %s', prettyHrtime(process.hrtime(startAt)));
-    return item;
-  })
-  .then(function (item) {
-    return Promise.promisify(csv.stringify)([TaobaoAdaptor.fromAliexpress.transfer(item)], {
-      delimiter: '\t'
-    }).then(function (text) {
-      return fs.readFileAsync(path.resolve(__dirname, './template/taobao.csv')).then(function (template) {
-        return template + text;
-      });
-    }).then(function (text) {
-      return iconv.encode(text, 'gbk');
-    }).then(function (buffer) {
-      return fs.writeFileAsync('./output.csv', buffer);
-    });
-  })
-  .catch(function (err) {
-    console.error(err.stack);
-    console.error(err);
+module.exports = function (urls, options) {
+  options = _.defaults(options, {
+    timeout: 30000,
+    concurrency: 1,
+    uid: 0
   });
+  return init(options)
+    .then(function () {
+      return Promise.map(urls, function (url) {
+        return fetch(url, {
+          uid: options.uid
+        });
+      }, {
+        concurrency: options.concurrency
+      });
+    })
+    .then(function (items) {
+      return Promise.promisify(csv.stringify)(_.map(items, function (item) {
+        return TaobaoAdaptor.fromAliexpress.transfer(item);
+      }), {
+        delimiter: '\t'
+      }).then(function (text) {
+        return fs.readFileAsync(path.resolve(__dirname, './template/taobao.csv')).then(function (template) {
+          return template + text;
+        });
+      }).then(function (text) {
+        return {
+          items: items,
+          csv: iconv.encode(text, 'gbk')
+        };
+      });
+    })
+    .catch(function (err) {
+      console.error(err.stack);
+      console.error(err);
+    });
+};

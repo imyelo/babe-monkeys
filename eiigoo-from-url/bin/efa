@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+
+var commander = require('commander');
+var Promise = require('bluebird');
+var fs = Promise.promisifyAll(require('fs-extra'));
+var path = require('path');
+var cwd = process.cwd();
+
+var spider = require('..');
+
+var OUTPUT_CSV_FILENAME = 'eiigoo.csv';
+var OUTPUT_IMAGE_PATHNAME = 'images';
+
+var program = commander;
+
+var pathify = function (where) {
+  return path.resolve(cwd, where);
+};
+
+program.version('0.0.1')
+  .option('-s, --source [path]', '需爬取的地址列表文件', pathify, pathify('./aliexpress.txt'))
+  .option('-o, --output [path]', '输出文件的目录', pathify, pathify('./output'))
+  .option('-c, --concurrency [number]', '并发数', parseInt, 1)
+  .option('-t, --timeout [ms]', '超时时间', parseInt, 30000)
+  .option('-u, --uid [id]', '用户ID', 0)
+  .parse(process.argv);
+
+fs.readFileAsync(program.source, 'utf8')
+  .then(function (str) {
+    return str.split('\n').filter(function (line) {
+      return line.trim();
+    });
+  })
+  .then(function (urls) {
+    return spider(urls, {
+      timeout: program.timeout,
+      concurrency: program.concurrency,
+      output: program.output,
+      uid: program.uid
+    });
+  })
+  .then(function (result) {
+    return fs.ensureDirAsync(program.output)
+      .then(function () {
+        return fs.writeFileAsync(path.join(program.output, OUTPUT_CSV_FILENAME), result.csv)
+      }).then(function () {
+        return result;
+      });
+  })
+  .then(function (result) {
+  	var folder = path.join(program.output, OUTPUT_IMAGE_PATHNAME);
+    return fs.emptyDirAsync(folder)
+      .then(function () {
+        return Promise.map(result.items, function (item) {
+          return Promise.map(item.caches, function (cache) {
+            return fs.copyAsync(cache.path, path.join(program.output, OUTPUT_IMAGE_PATHNAME, cache.filename), {
+            	replace: true
+            });
+          });
+        });
+      });
+  })
+  .catch(function (err) {
+    console.error(err);
+  });
